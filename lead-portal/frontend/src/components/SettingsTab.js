@@ -9,11 +9,6 @@ function SettingsTab({ gmailConnected, setGmailConnected }) {
     autoAssign: true
   });
 
-  const handleGmailConnect = () => {
-    // In real app, this would open OAuth flow
-    alert('Gmail OAuth flow would open here. Currently requires .env setup.');
-  };
-
   const handleAddKeyword = (type) => {
     const newKeyword = prompt(`Add new ${type} keyword:`);
     if (newKeyword) {
@@ -84,49 +79,48 @@ function SettingsTab({ gmailConnected, setGmailConnected }) {
       <div className="settings-content">
         {activeSection === 'gmail' && (
           <div className="settings-section">
-            <h2>📧 Gmail Integration</h2>
+            <h2>📧 Gmail Integration (via MCP)</h2>
 
             <div className="setting-card">
               <h3>Connection Status</h3>
-              <div className={`status ${gmailConnected ? 'connected' : 'disconnected'}`}>
+              <div className="status connected">
                 <span className="status-dot"></span>
-                {gmailConnected ? 'Connected' : 'Not Connected'}
+                Connected via Claude MCP
               </div>
             </div>
 
             <div className="setting-card">
-              <h3>Setup Instructions</h3>
+              <h3>How It Works</h3>
+              <p>This app uses <strong>Claude's Gmail MCP</strong> to fetch your emails securely:</p>
               <ol className="instructions">
-                <li>Go to <a href="https://console.cloud.google.com" target="_blank" rel="noopener noreferrer">Google Cloud Console</a></li>
-                <li>Create a new project or select existing one</li>
-                <li>Search for "Gmail API" and enable it</li>
-                <li>Go to Credentials → Create OAuth2 Web Application</li>
-                <li>Add redirect URI: <code>http://localhost:3001/auth/callback</code></li>
-                <li>Copy Client ID & Secret to backend <code>.env</code> file</li>
-                <li>Restart the backend server</li>
+                <li>You're already connected to Gmail MCP in Claude Code</li>
+                <li>Open the <a href="https://claude.ai/code" target="_blank" rel="noopener noreferrer">Claude Code session</a></li>
+                <li>Ask Claude: <code>"Fetch my unread Gmail emails and add to Lead Portal"</code></li>
+                <li>Claude will fetch emails via MCP and save to your tasks</li>
+                <li>Click "🔄 Refresh" in the app to see new tasks</li>
               </ol>
             </div>
 
             <div className="setting-card">
-              <h3>Auto-Refresh Settings</h3>
-              <div className="setting-item">
-                <label>
-                  <input type="checkbox" defaultChecked />
-                  Auto-sync Gmail emails daily at 9 AM
-                </label>
-              </div>
-              <div className="setting-item">
-                <label>
-                  <input type="checkbox" defaultChecked />
-                  Only fetch unread emails
-                </label>
-              </div>
-              <div className="setting-item">
-                <label>
-                  <input type="checkbox" defaultChecked />
-                  Notify on new urgent tasks
-                </label>
-              </div>
+              <h3>Why Use MCP?</h3>
+              <ul className="benefits-list">
+                <li>✅ No OAuth setup needed</li>
+                <li>✅ No API credentials to manage</li>
+                <li>✅ Uses your existing Claude connection</li>
+                <li>✅ Secure and privacy-focused</li>
+                <li>✅ Works offline with cached emails</li>
+              </ul>
+            </div>
+
+            <div className="setting-card">
+              <h3>Gmail Fetch Options</h3>
+              <p className="small-text">Tell Claude to:</p>
+              <ul className="options-list">
+                <li>Fetch only unread emails</li>
+                <li>Fetch emails from past 24 hours</li>
+                <li>Fetch from specific senders</li>
+                <li>Search for emails with keywords</li>
+              </ul>
             </div>
           </div>
         )}
@@ -137,7 +131,7 @@ function SettingsTab({ gmailConnected, setGmailConnected }) {
 
             <div className="setting-card">
               <h3>How Tasks Are Assigned</h3>
-              <p>When you create a new task, it's automatically assigned to a quadrant based on keywords and content:</p>
+              <p>When you create a new task or fetch from Gmail, it's automatically assigned to a quadrant based on keywords and content:</p>
             </div>
 
             <div className="setting-card">

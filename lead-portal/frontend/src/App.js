@@ -60,8 +60,10 @@ function App() {
   const refreshTasks = async () => {
     try {
       setLoading(true);
-      await axios.post(`${API_URL}/tasks/refresh`);
+      // With MCP, user triggers refresh from Claude session
+      // This just reloads tasks from the server
       fetchTasks();
+      alert('✅ Check Claude session to fetch Gmail emails via MCP');
     } catch (error) {
       console.error('Failed to refresh tasks:', error);
     } finally {
