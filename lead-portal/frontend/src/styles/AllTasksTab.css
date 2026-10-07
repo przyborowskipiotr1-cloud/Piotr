@@ -1,8 +1,9 @@
 .all-tasks-tab {
-  padding: 20px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%);
+  border-radius: 12px;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(229, 231, 235, 0.6);
 }
 
 .controls {
@@ -25,11 +26,25 @@
 }
 
 .control-group select {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 10px 12px;
+  border: 1px solid rgba(229, 231, 235, 0.6);
+  border-radius: 8px;
   font-size: 14px;
   cursor: pointer;
+  background-color: rgba(248, 249, 250, 0.8);
+  color: #0f1419;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.control-group select:hover {
+  border-color: #3b82f6;
+}
+
+.control-group select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .tasks-container {
