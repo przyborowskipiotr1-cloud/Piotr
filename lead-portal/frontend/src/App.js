@@ -60,8 +60,6 @@ function App() {
   const refreshTasks = async () => {
     try {
       setLoading(true);
-      // With MCP, user triggers refresh from Claude session
-      // This just reloads tasks from the server
       fetchTasks();
       alert('✅ Check Claude session to fetch Gmail emails via MCP');
     } catch (error) {
@@ -150,6 +148,9 @@ function App() {
     return tasks.filter(t => t.quadrant === quadrant && !t.completed);
   };
 
+  const allTasks = tasks.filter(t => !t.completed);
+  const completedTasks = tasks.filter(t => t.completed);
+
   const quadrants = [
     { id: 'quadrant-1', title: 'Do First', subtitle: 'Urgent & Important', quadrant: 'urgent-important', color: 'red' },
     { id: 'quadrant-2', title: 'Schedule', subtitle: 'Not Urgent & Important', quadrant: 'not-urgent-important', color: 'blue' },
@@ -157,91 +158,88 @@ function App() {
     { id: 'quadrant-4', title: 'Eliminate', subtitle: 'Not Urgent & Not Important', quadrant: 'not-urgent-not-important', color: 'gray' }
   ];
 
-  const allTasks = tasks.filter(t => !t.completed);
-  const completedTasks = tasks.filter(t => t.completed);
-
   return (
-    <div className="app">
-      <header className="header">
-        <h1>📊 Lead Portal</h1>
-        <div className="header-actions">
-          <button onClick={refreshTasks} disabled={loading} className="btn btn-primary">
-            {loading ? 'Loading...' : '🔄 Refresh Gmail'}
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <div className="app">
+        <header className="header">
+          <h1>📊 Lead Portal</h1>
+          <div className="header-actions">
+            <button onClick={refreshTasks} disabled={loading} className="btn btn-primary">
+              {loading ? 'Loading...' : '🔄 Refresh Gmail'}
+            </button>
+            <button onClick={() => setShowAddTask(!showAddTask)} className="btn btn-secondary">
+              ➕ Add Task
+            </button>
+          </div>
+        </header>
+
+        <div className="tabs">
+          <button
+            className={`tab ${activeTab === 'matrix' ? 'active' : ''}`}
+            onClick={() => setActiveTab('matrix')}
+          >
+            📊 Matrix
           </button>
-          <button onClick={() => setShowAddTask(!showAddTask)} className="btn btn-secondary">
-            ➕ Add Task
+          <button
+            className={`tab ${activeTab === 'all' ? 'active' : ''}`}
+            onClick={() => setActiveTab('all')}
+          >
+            📋 All Tasks
+          </button>
+          <button
+            className={`tab ${activeTab === 'settings' ? 'active' : ''}`}
+            onClick={() => setActiveTab('settings')}
+          >
+            ⚙️ Settings
           </button>
         </div>
-      </header>
 
-      <div className="tabs">
-        <button
-          className={`tab ${activeTab === 'matrix' ? 'active' : ''}`}
-          onClick={() => setActiveTab('matrix')}
-        >
-          📊 Matrix
-        </button>
-        <button
-          className={`tab ${activeTab === 'all' ? 'active' : ''}`}
-          onClick={() => setActiveTab('all')}
-        >
-          📋 All Tasks
-        </button>
-        <button
-          className={`tab ${activeTab === 'settings' ? 'active' : ''}`}
-          onClick={() => setActiveTab('settings')}
-        >
-          ⚙️ Settings
-        </button>
-      </div>
+        <div className="stats">
+          <span>Total: {stats.total}</span>
+          <span>Active: {allTasks.length}</span>
+          <span>Completed: {completedTasks.length}</span>
+        </div>
 
-      <div className="stats">
-        <span>Total: {stats.total}</span>
-        <span>Active: {allTasks.length}</span>
-        <span>Completed: {completedTasks.length}</span>
-      </div>
+        {showAddTask && (
+          <form className="add-task-form" onSubmit={handleAddTask}>
+            <input
+              type="text"
+              placeholder="Task title"
+              value={newTask.title}
+              onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+              required
+            />
+            <textarea
+              placeholder="Description"
+              value={newTask.description}
+              onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+            />
+            <input
+              type="date"
+              value={newTask.dueDate}
+              onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
+            />
+            <div className="form-group">
+              <label>Assign to Quadrant (optional - auto-assigned if blank)</label>
+              <select
+                value={newTask.quadrant || ''}
+                onChange={(e) => setNewTask({ ...newTask, quadrant: e.target.value || null })}
+              >
+                <option value="">Auto-assign based on keywords</option>
+                <option value="urgent-important">Do First - Urgent & Important</option>
+                <option value="not-urgent-important">Schedule - Not Urgent & Important</option>
+                <option value="urgent-not-important">Delegate - Urgent & Not Important</option>
+                <option value="not-urgent-not-important">Eliminate - Not Urgent & Not Important</option>
+              </select>
+            </div>
+            <div className="form-actions">
+              <button type="submit" className="btn btn-success">Add</button>
+              <button type="button" onClick={() => setShowAddTask(false)} className="btn btn-cancel">Cancel</button>
+            </div>
+          </form>
+        )}
 
-      {showAddTask && (
-        <form className="add-task-form" onSubmit={handleAddTask}>
-          <input
-            type="text"
-            placeholder="Task title"
-            value={newTask.title}
-            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-            required
-          />
-          <textarea
-            placeholder="Description"
-            value={newTask.description}
-            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-          />
-          <input
-            type="date"
-            value={newTask.dueDate}
-            onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
-          />
-          <div className="form-group">
-            <label>Assign to Quadrant (optional - auto-assigned if blank)</label>
-            <select
-              value={newTask.quadrant || ''}
-              onChange={(e) => setNewTask({ ...newTask, quadrant: e.target.value || null })}
-            >
-              <option value="">Auto-assign based on keywords</option>
-              <option value="urgent-important">Do First - Urgent & Important</option>
-              <option value="not-urgent-important">Schedule - Not Urgent & Important</option>
-              <option value="urgent-not-important">Delegate - Urgent & Not Important</option>
-              <option value="not-urgent-not-important">Eliminate - Not Urgent & Not Important</option>
-            </select>
-          </div>
-          <div className="form-actions">
-            <button type="submit" className="btn btn-success">Add</button>
-            <button type="button" onClick={() => setShowAddTask(false)} className="btn btn-cancel">Cancel</button>
-          </div>
-        </form>
-      )}
-
-      {activeTab === 'matrix' && (
-        <DragDropContext onDragEnd={handleDragEnd}>
+        {activeTab === 'matrix' && (
           <div className="matrix-container">
             {quadrants.map((quadrant) => (
               <Droppable key={quadrant.id} droppableId={quadrant.id}>
@@ -283,26 +281,26 @@ function App() {
               </Droppable>
             ))}
           </div>
-        </DragDropContext>
-      )}
+        )}
 
-      {activeTab === 'all' && (
-        <AllTasksTab
-          tasks={allTasks}
-          completedTasks={completedTasks}
-          onDelete={handleDeleteTask}
-          onComplete={handleCompleteTask}
-          quadrants={quadrants}
-        />
-      )}
+        {activeTab === 'all' && (
+          <AllTasksTab
+            tasks={allTasks}
+            completedTasks={completedTasks}
+            onDelete={handleDeleteTask}
+            onComplete={handleCompleteTask}
+            quadrants={quadrants}
+          />
+        )}
 
-      {activeTab === 'settings' && (
-        <SettingsTab
-          gmailConnected={gmailConnected}
-          setGmailConnected={setGmailConnected}
-        />
-      )}
-    </div>
+        {activeTab === 'settings' && (
+          <SettingsTab
+            gmailConnected={gmailConnected}
+            setGmailConnected={setGmailConnected}
+          />
+        )}
+      </div>
+    </DragDropContext>
   );
 }
 
