@@ -29,6 +29,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [showAddTask, setShowAddTask] = useState(false);
   const [activeTab, setActiveTab] = useState('matrix');
+  const [menuOpen, setMenuOpen] = useState(false);
   const [newTask, setNewTask] = useState({ title: '', description: '', dueDate: '', quadrant: null });
   const [stats, setStats] = useState({ total: 0, completed: 0 });
   const [gmailConnected, setGmailConnected] = useState(false);
@@ -173,26 +174,49 @@ function App() {
           </div>
         </header>
 
-        <div className="tabs">
+        <nav className="nav-menu">
           <button
-            className={`tab ${activeTab === 'matrix' ? 'active' : ''}`}
-            onClick={() => setActiveTab('matrix')}
+            className="menu-toggle"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle navigation"
           >
-            📊 Matrix
+            <span className="menu-icon">☰</span>
+            <span className="menu-label">Navigation</span>
+            <span className={`menu-arrow ${menuOpen ? 'open' : ''}`}>▼</span>
           </button>
-          <button
-            className={`tab ${activeTab === 'all' ? 'active' : ''}`}
-            onClick={() => setActiveTab('all')}
-          >
-            📋 All Tasks
-          </button>
-          <button
-            className={`tab ${activeTab === 'settings' ? 'active' : ''}`}
-            onClick={() => setActiveTab('settings')}
-          >
-            ⚙️ Settings
-          </button>
-        </div>
+
+          {menuOpen && (
+            <div className="menu-items">
+              <button
+                className={`menu-item ${activeTab === 'matrix' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTab('matrix');
+                  setMenuOpen(false);
+                }}
+              >
+                📊 Matrix
+              </button>
+              <button
+                className={`menu-item ${activeTab === 'all' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTab('all');
+                  setMenuOpen(false);
+                }}
+              >
+                📋 All Tasks
+              </button>
+              <button
+                className={`menu-item ${activeTab === 'settings' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTab('settings');
+                  setMenuOpen(false);
+                }}
+              >
+                ⚙️ Settings
+              </button>
+            </div>
+          )}
+        </nav>
 
         <div className="stats">
           <span>Total: {stats.total}</span>
